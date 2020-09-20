@@ -1,0 +1,26 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+require 'optparse'
+require_relative '../lib/spotify_save_track'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: setup --client-id=123 --client-secret=321'
+
+  opts.on('--client-id=CLIENT_ID', 'Spotify client id') do |id|
+    options[:id] = id
+  end
+
+  opts.on('--client-secret=CLIENT_SECRET', 'Spotify client secret') do |secret|
+    options[:secret] = secret
+  end
+end.parse!
+
+raise OptionParser::MissingArgument, '--client-id' if options[:id].nil?
+raise OptionParser::MissingArgument, '--client-secret' if options[:secret].nil?
+
+Setup.new.call(
+  client_id: options.fetch(:id),
+  client_secret: options.fetch(:secret)
+)

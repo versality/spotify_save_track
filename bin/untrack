@@ -1,0 +1,22 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+require_relative '../lib/spotify_save_track'
+
+credentials = Config.load.fetch(:credentials)
+token = Spotify::OAuth2.new(
+  client_id: credentials.fetch(:client_id),
+  client_secret: credentials.fetch(:client_secret)
+).token
+
+spotify_track = Spotify::Track.new(token: token)
+track = spotify_track.currently_playing
+spotify_track.remove(track.item.id)
+
+`
+terminal-notifier
+  -title Spotify
+  -subtitle "Removed from library"
+  -message "#{track.item.artists.first.name} - #{track.item.name}"
+  -appIcon https://developer.spotify.com/assets/branding-guidelines/icon3@2x.png
+`
